@@ -1,7 +1,10 @@
-!python/~
-!python/by_class
-!python/new_dataset
-!python/.ipynb_checkpoints
-!python/8-bit Arcade Out.ttf
-!python/img.png
-!python/Untitled.ipynb
+python/~
+python/by_class
+python/new_dataset
+python/dataset_only_characters
+python/.ipynb_checkpoints
+python/8-bit Arcade Out.ttf
+python/img.png
+python/Untitled.ipynb
+python/models/char_ocr_model_128_v1.h5
+*.png

@@ -23,7 +23,7 @@ import tensorflow as tf
 from keras.utils import load_img
 from keras.utils import img_to_array
 
-line_width = 5
+line_width = 6
 class procesor():
     def __init__(self, name, proportion = None, roi_area = None):
         self.canvas_size = 128

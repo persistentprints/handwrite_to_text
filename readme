@@ -1,1 +1,26 @@
-the sake of the project is to create a handwritte to text app, using a CCN for the recognition part made with tensorlow-keras library
+the sake of the project is to create a handwritte to text app, using a CCN for the recognition part made with tensorflow-keras library, the dataset used is the NIST Special Database 19, the link is this:
+
+https://www.nist.gov/srd/nist-special-database-19
+
+File description:
+
+full_integration.py.- It's the main application it inculdes the gui and the processing part to get the prediction of the characters written.
+
+main.kv.- The code for the gui.
+
+ocr_cnn_v1.py.- Code for training the CNN
+
+models(folder).- Contains diferent CNN models the the most importants are 'char_ocr_model_128_v1.h5'(default), 'char_ocr_model_64_v2.h5' and 'mnist_model.h5'.
+
+dataset_processor.py.- It is used for reading and processing the NIST-dataset dividing it in a test set and train set.
+
+dataset_processor_only_char.py.- The same as dataset_processor but it only takes lowercase letters.
+
+gui.py.- A code used to program and test the gui part.
+
+image_process.py.- The implementation of the characters detection using opencv.
+
+test_cnn.py.- test a CNN model using with an image.
+
+8-bit.ttf.- 8 bit style font used in the gui part.
+
