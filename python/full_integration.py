@@ -23,16 +23,19 @@ import tensorflow as tf
 from keras.utils import load_img
 from keras.utils import img_to_array
 
+line_width = 5
 class procesor():
     def __init__(self, name, proportion = None, roi_area = None):
+        self.canvas_size = 128
         self.name = name # name as a string with the file type ex'.png'
         self.roi_area = roi_area #region of interest as a list begining with the x position and then the y position
-        self.model = tf.keras.models.load_model('/home/gustavo/OCR_project/python/models/ocr_model_4.h5')
-        self.classes = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+        self.model = tf.keras.models.load_model('/home/gustavo/OCR_project/python/models/char_ocr_model_128_v1.h5')
+        #self.classes = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+        self.classes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
         if(proportion == None):
-            self.pixel_proportion = int((128 * (3/5)))
+            self.pixel_proportion = int((self.canvas_size * (2/5)))
         else:
-            self.pixel_proportion = int((128 * proportion))
+            self.pixel_proportion = int((self.canvas_size * proportion))
         
     def load(self):
         print("ok")
@@ -111,8 +114,8 @@ class procesor():
         #resize and save each character into a 128x128 image for later clasification
         self.character_imgs = []
         for character in range(len(self.characters)):
-            character_img = np.zeros((128, 128), dtype=np.uint8)
-            character_img.fill(255)
+            character_img = np.zeros((self.canvas_size, self.canvas_size), dtype=np.uint8)
+            character_img.fill(255) #fill the image with blanck color
             size_x = self.characters[character][1] - self.characters[character][0]
             size_y = self.characters[character][3] - self.characters[character][2]
             aspect_ratio = size_y/size_x
@@ -124,8 +127,8 @@ class procesor():
                 resized = cv2.resize(character_roi,(self.pixel_proportion , int(self.pixel_proportion * aspect_ratio)), cv2.INTER_NEAREST)
                 
             #put the character in the middle of the empty image
-            character_img[int((128-(resized.shape[0]))/2):int(((128-resized.shape[0])/2)+resized.shape[0]),int((128-(resized.shape[1]))/2):int(((128-resized.shape[1])/2)+resized.shape[1])] = resized
-            _,character_img  = cv2.threshold(character_img,64,255,cv2.THRESH_BINARY)
+            character_img[int((self.canvas_size-(resized.shape[0]))/2):int(((self.canvas_size-resized.shape[0])/2)+resized.shape[0]),int((self.canvas_size-(resized.shape[1]))/2):int(((self.canvas_size-resized.shape[1])/2)+resized.shape[1])] = resized
+            #_,character_img  = cv2.threshold(character_img,64,255,cv2.THRESH_BINARY)
             cv2.imwrite((str(character) + '.png'), character_img)
             character_img = np.expand_dims(character_img, axis = 0)
             character_img = np.expand_dims(character_img, axis = 3)
@@ -141,6 +144,8 @@ class procesor():
             index = (np.argmax(result).astype(int))
             results += self.classes[index]
         print(results)
+        return results
+
 # init screen
 class loadScreen(Screen):
     pass
@@ -159,8 +164,9 @@ class appScreen(Screen):
         self.procesor.load()
         self.procesor.detect()
         self.procesor.pack()
-        self.procesor.classify()
-    
+        text = self.procesor.classify()
+        self.ids.process.text = str(text)
+
     def clear(self):
         self.painter.clear()
         
@@ -168,11 +174,11 @@ class appScreen(Screen):
 class drawWidget(Widget):
     def on_touch_down(self, touch):
         #print("touched" + str(touch.pos))
-        #detect qhen touched and start drawing
+        #detect when touched and start drawing
         with self.canvas:
             Color(0,0,0,1, mode="rgba")   
-            self.line = Line(points=[touch.pos[0], touch.pos[1]], width=2)
-        
+            self.line = Line(points=[touch.pos[0], touch.pos[1]], width=line_width)
+            
     def on_touch_move(self, touch):
         # keep drawing on touch move
         self.line.points = self.line.points + [touch.pos[0], touch.pos[1]]

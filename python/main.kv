@@ -44,3 +44,34 @@
             font_size: 30
             on_press: root.clear()
 
+        Label:
+            name: 'result'
+            text: 'result '
+            size_hint: .3, .2
+            pos_hint: {'x': 0, 'y': 0}
+            color: 0,0,0,1
+            font_name: "8-bit"
+            font_size: 50
+
+        Label:
+            canvas.before:
+                Color:
+                    rgba: 0, 0, 0, 1
+                Rectangle: 
+                    pos: self.pos
+                    size: self.size    
+                Color:
+                    rgba: 1, 1, 1, 1
+                Rectangle: 
+                    pos: (self.x + (self.x * 0.05)), (self.y + (self.y * 0.05))
+                    size: (self.width-(self.width * 0.06)), (self.height-(self.height * 0.1))
+                    
+            id: process        
+            name: 'process'
+            text: ''
+            size_hint: .5, .2
+            pos_hint: {'x': 0.3, 'y': 0}
+            color: 0,0,0,1
+            font_name: "8-bit"
+            font_size: 50
+            

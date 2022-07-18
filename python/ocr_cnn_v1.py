@@ -16,9 +16,9 @@ from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
 #os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 img_width, img_height = 128,128
-num_classes = 62
-train_path = '/home/gustavo/OCR_project/python/new_dataset/train'
-test_path = '/home/gustavo/OCR_project/python/new_dataset/test'
+num_classes = 26
+train_path = '/home/gustavo/OCR_project/python/dataset_only_characters/train'
+test_path = '/home/gustavo/OCR_project/python/dataset_only_characters/test'
 
 train_ds = tf.keras.utils.image_dataset_from_directory(
     train_path,
@@ -57,20 +57,20 @@ normalization_layer = layers.Rescaling(1./255)
 norm_ds_train= train_ds.map(lambda x, y: (normalization_layer(x), y))
 norm_ds_test = test_ds.map(lambda x, y: (normalization_layer(x), y))
 """
-
+class_names = train_ds.class_names
 norm_ds_train= train_ds
 norm_ds_test = test_ds
 
 cnn = tf.keras.models.Sequential()
-cnn.add(layers.Rescaling(1./255))
-cnn.add(tf.keras.layers.Conv2D(filters=32, kernel_size=11, activation='relu', input_shape=[img_width, img_height, 1]))
+cnn.add(layers.Rescaling(1.0/255.0))
+cnn.add(tf.keras.layers.Conv2D(filters=64, kernel_size=9, activation='relu', input_shape=[img_width, img_height, 1]))
 cnn.add(tf.keras.layers.MaxPooling2D(pool_size=2, strides=2))
-cnn.add(tf.keras.layers.Conv2D(filters=32, kernel_size=11, activation='relu'))
+cnn.add(tf.keras.layers.Conv2D(filters=64, kernel_size=9, activation='relu'))
 cnn.add(tf.keras.layers.MaxPooling2D(pool_size=2, strides=2))
 cnn.add(tf.keras.layers.Flatten())
-cnn.add(tf.keras.layers.Dense(units=64, activation='relu'))
+cnn.add(tf.keras.layers.Dense(units=256, activation='relu'))
 cnn.add(tf.keras.layers.Dense(num_classes, activation = 'softmax'))
 cnn.compile(optimizer = 'adam', loss=tf.keras.losses.CategoricalCrossentropy(), metrics = ['accuracy'])
 callback = tf.keras.callbacks.EarlyStopping(monitor='loss', patience=3)
-cnn.fit(x = norm_ds_train, validation_data = norm_ds_test, epochs = 20)
-cnn.save('ocr_model.h5')
+cnn.fit(x = norm_ds_train, validation_data = norm_ds_test, epochs = 30, callbacks = [callback])
+cnn.save('char_ocr_model.h5')
