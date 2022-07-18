@@ -26,10 +26,10 @@ from keras.utils import img_to_array
 line_width = 6
 class procesor():
     def __init__(self, name, proportion = None, roi_area = None):
-        self.canvas_size = 128
+        self.canvas_size = 64
         self.name = name # name as a string with the file type ex'.png'
         self.roi_area = roi_area #region of interest as a list begining with the x position and then the y position
-        self.model = tf.keras.models.load_model('/home/gustavo/OCR_project/python/models/char_ocr_model_128_v1.h5')
+        self.model = tf.keras.models.load_model('/home/gustavo/OCR_project/python/models/char_ocr_model_64_v2.h5')
         #self.classes = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
         self.classes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
         if(proportion == None):
